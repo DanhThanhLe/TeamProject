@@ -15,7 +15,7 @@
                         <div class="card-header bg-success text-white text-uppercase">New product</div>
                         <div class="card-body">
                             <img class="img-fluid" src="${n.productImage}" />
-                            <h5 class="card-title">${n.productName}</h5>
+                            <h5  class="card-title">${n.productName}</h5> 
                             <p class="bloc_left_price">${n.price} $</p>
                         </div>
                     </div>
