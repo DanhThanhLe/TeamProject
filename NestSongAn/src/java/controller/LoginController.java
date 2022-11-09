@@ -23,16 +23,13 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
 
-    private static final String INVALID = "invalid.jsp";
-    private static final String ADMIN_PAGE = "admin.jsp";
-    private static final String ADMIN = "AD";
+   
     
-    private static final String USER_PAGE = "user.jsp";
-    private static final String USER = "US";
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = INVALID;
+      
         try {
             String userID = request.getParameter("username");
             String password = request.getParameter("password");
@@ -41,21 +38,14 @@ public class LoginController extends HttpServlet {
             if (user != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("LOGIN_USER", user);
-                if (ADMIN.equals(user.getRole())) {
-                    url = ADMIN_PAGE;
-                } else if (USER.equals(user.getRole())) {
-                    url = USER_PAGE;
-                } else {
-                    request.setAttribute("ERROR_MESSAGE", "Your role is not support!");
-                }
-            } else {
-                request.setAttribute("ERROR_MESSAGE", "Incorrect UserID or Password!");
+                request.getRequestDispatcher("HomeController").forward(request, response);
             }
+            else{
+                request.getRequestDispatcher("LoginPage.jsp").forward(request, response);
+            }
+                
         } catch (Exception e) {
             log("Error at LoginController: " + e.toString());
-        } finally {
-//            response.sendRedirect(url);
-            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 

@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.naming.NamingException;
 
 /**
  *
@@ -27,56 +28,36 @@ public class AccountDAO {
     private static final String CHECK_DUPLICATE = " SELECT UserName FROM tblUsers WHERE UserName = ? ";
     private static final String INSERT = " INSERT INTO Account( UserName, FullName, Role, Password, Phone, Mail) VALUES(?,?,?,?,?,?) ";
 
-    public boolean checkDuplicate(String userID) throws SQLException {
-        boolean check = false;
-        Connection conn = null;
-        PreparedStatement stm = null;
-        ResultSet rs = null;
-        try {
-            conn = DBHelper.getConnection();
-            if (conn != null) {
-                stm = conn.prepareStatement(CHECK_DUPLICATE);
-                stm.setString(1, userID);
-                rs = stm.executeQuery();
-                if (rs.next()) {
-                    check = true;
-                }
-            }
-        } catch (Exception e) {
-        } finally {
-            if (rs != null) rs.close();
-            if (stm != null) stm.close();
-            if (conn != null) conn.close();
-        }
-        return check;
-    }
+   
     
-    public AccountDTO checkLogin(String userID, String password) throws SQLException {
-        AccountDTO user = null;
-        Connection conn = null;
+     public AccountDTO checkLogin(String username, String password)
+            throws SQLException, NamingException, ClassNotFoundException {
+        Connection connection = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
+        AccountDTO result = null;
         try {
-            conn = DBHelper.getConnection();
-            if (conn != null) {
-                stm = conn.prepareStatement(LOGIN);
-                stm.setString(1, userID);
+            //1. Make connection
+            connection = DBHelper.getConnection();
+            if (connection != null) {
+                //2. Create SQL String
+                String sql = "Select UserName, Role "
+                        + "From Account "
+                        + "Where UserName = ? And Password = ?";
+                //3.Create Statement Object
+                stm = connection.prepareStatement(sql);
+                stm.setString(1, username);
                 stm.setString(2, password);
-                stm.setBoolean(3, true);
+                //4.Execute Query
                 rs = stm.executeQuery();
+                //5.Proccess result
                 if (rs.next()) {
-                    String userName = rs.getString("userName");
-                    String fullName = rs.getString("fullName");
-                    String roleID = rs.getString("roleID");
-                    String mail = rs.getString("mail");
-                    String phone = rs.getString("phoneNumber");
+                    String fullName = rs.getString("FullName");
+                    String role = rs.getString("Role");
+                    result = new AccountDTO(username, password, fullName, role);
                     
-                    boolean status = rs.getBoolean("status");
-                    user = new AccountDTO("", userName, "", fullName, mail, roleID, phone);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             if (rs != null) {
                 rs.close();
@@ -84,13 +65,12 @@ public class AccountDAO {
             if (stm != null) {
                 stm.close();
             }
-            if (conn != null) {
-                conn.close();
+            if (connection != null) {
+                connection.close();
             }
         }
-        return user;
+        return result;
     }
-
     public List<AccountDTO> getListUser(String search) throws SQLException {
         List<AccountDTO> list = new ArrayList<>();
         Connection conn = null;

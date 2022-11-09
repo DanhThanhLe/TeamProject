@@ -19,9 +19,9 @@
                 <div class="col">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="HomeController">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Category</a></li>
-                            <li class="breadcrumb-item active" aria-current="#">Sub-category</li>
+                            <li class="breadcrumb-item"><a href="HomeController">Trang Chủ</a></li>
+                            <li class="breadcrumb-item"><a href="#">Hạng Mục</a></li>
+                            <li class="breadcrumb-item active" aria-current="#">Hạng Mục Con</li>
                         </ol>
                     </nav>
                 </div>
@@ -41,10 +41,10 @@
                                         <h4 class="card-title show_txt"><a href="detail?pid=${o.productID}&a=${o.productID}" title="View Product">${o.productName}</a></h4>
                                         <div class="row">
                                             <div class="col">
-                                                <p class="btn btn-danger btn-block">${o.price} $</p>
+                                                <p class="btn btn-danger btn-block">${o.price} VND</p>
                                             </div>
                                             <div class="col">
-                                                <a href="CartController?id=${o.productID}&name=${o.productName}&op=add_to_cart&quantity=1" class="btn btn-success btn-block">Add to cart</a>
+                                                <a href="CartController?id=${o.productID}&name=${o.productName}&op=add_to_cart&quantity=1" class="btn btn-success btn-block">Thêm Vào Giỏ</a>
                                             </div>
                                         </div>
                                     </div>

@@ -10,15 +10,20 @@ import ductm.category.CartDTO;
 import ductm.category.CategoryDAO;
 import ductm.category.CategoryDTO;
 import ductm.category.Item;
+import ductm.order.OrderDAO;
+import ductm.order.OrderDetailDAO;
 import ductm.product.ProductDAO;
 import ductm.product.ProductDTO;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,7 +50,7 @@ public class CartController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException, ClassNotFoundException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         int id = 100;
         id = Integer.parseInt(request.getParameter("id")) ;
@@ -65,7 +70,8 @@ public class CartController extends HttpServlet {
                 break;
             case "ViewCart":
                 ViewCart(request, response);
-
+                break;
+            
 
         }
         System.out.println(id);
@@ -107,7 +113,7 @@ public class CartController extends HttpServlet {
         request.setAttribute("listC", listC);
         request.setAttribute("n", last);
 
-
+session.setAttribute("cartsize", cartSize(lst));
         session.setAttribute("cart", lst);
         session.setAttribute("total", totalPrice(lst));
         request.getRequestDispatcher("ViewCart.jsp").forward(request, response);
@@ -132,6 +138,7 @@ public class CartController extends HttpServlet {
         request.setAttribute("listC", listC);
         request.setAttribute("n", last);
         session.setAttribute("cart", lst);
+        session.setAttribute("cartsize", cartSize(lst));
         session.setAttribute("total", totalPrice(lst));
         request.getRequestDispatcher("ViewCart.jsp").forward(request, response);
         
@@ -163,35 +170,72 @@ public class CartController extends HttpServlet {
         request.setAttribute("listC", listC);
         request.setAttribute("n", last);
         session.setAttribute("cart", cart);
+        session.setAttribute("cartsize", cartSize(cart));
         session.setAttribute("total", totalPrice(cart));
         request.getRequestDispatcher("HomeController").forward(request, response);
     }
     
-    protected void checkout(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        //Tạo đối tượng session
-        HttpSession session = request.getSession();
-        //Lấy cart từ session
-        CartDTO getCart = new CartDTO();
-        HashMap<Integer, Item> cart = (HashMap<Integer, Item>) session.getAttribute("cart"); 
-        if (cart != null) {// xóa giỏ hàng
-            getCart.setCart(cart);
-            getCart.empty();
-            cart = getCart.getList();
+   protected void checkout(HttpServletRequest request, HttpServletResponse response)
+       throws ServletException, IOException, SQLException, NamingException, ClassNotFoundException {
+       String name = request.getParameter("name");
+       String email = request.getParameter("email");
+       String phone = request.getParameter("phone");
+       String address = request.getParameter("address");
+       String total = request.getParameter("total");
+        OrderDAO dao = new OrderDAO();
+        OrderDetailDAO ddao = new OrderDetailDAO();
+         //1. Cust goes to cart place
+            HttpSession session = request.getSession();
+            //2. cust take cart
+            CartDTO getCart = new CartDTO();
+        HashMap<Integer, Item> cart = (HashMap<Integer, Item>) session.getAttribute("cart");
+            if(cart != null){
+                getCart.setCart(cart);
+                if(getCart.getList()!= null){
+                    Calendar c = Calendar.getInstance();
+                    java.util.Date day = c.getTime();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    String s = df.format(day);
+                    java.sql.Date day2 = java.sql.Date.valueOf(s);
+                    OrderDAO o = new OrderDAO();
+                    OrderDetailDAO o2 = new OrderDetailDAO();
+                    o.addOrder(name, email, phone, day2, address, total);
+                    int ID = o.getLastOrderID();
+                    int total2 = 0;
+                    for (Item item : getCart.getList().values()){
+                        ProductDTO prod = getCart.searchProduct(item.getName());
+                        o2.addOrderDetail(ID,item.getProduct().getProductID(),item.getQuantity(),prod.getPrice() ); 
+                        
+                       
+                    }
+
+                    session.removeAttribute("cart");
+                } 
+            }try {
+           
+       } catch (Exception e) {
+       }
+            finally{
+             response.sendRedirect("checkout.jsp");
         }
-        //cho  hiện trang chekout.jsp
-        request.getRequestDispatcher("checkout.jsp").forward(request, response);
-    }
-    public double totalPrice(HashMap<Integer, Item> cart){
+   }
+    
+  
+  public double totalPrice(HashMap<Integer, Item> cart){
         int count = 0;
         
         for(Map.Entry<Integer, Item> list : cart.entrySet()){
             count += list.getValue().getProduct().getPrice() * list.getValue().getQuantity();
-        }
-        return count;
+        }        return count;
         
     }
-
+  public int cartSize (HashMap<Integer, Item> cart){
+        int d=0;
+      for(Item i : cart.values()){
+          d+=i.getQuantity();
+      }
+      return d;
+  }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -209,6 +253,8 @@ public class CartController extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
+            Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -229,6 +275,8 @@ public class CartController extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
+            Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

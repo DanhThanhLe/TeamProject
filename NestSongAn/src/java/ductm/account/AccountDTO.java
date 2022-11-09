@@ -28,6 +28,14 @@ public class AccountDTO {
         this.phone = phone;
     }
 
+    public AccountDTO(String username, String password, String fullName, String role) {
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.role = role;
+    }
+    
+
     public AccountDTO() {
     }
 

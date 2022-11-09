@@ -28,6 +28,12 @@ public class ProductDTO implements Serializable{
         this.productImage = productImage;
     }
 
+    public ProductDTO(String productName, float price) {
+        this.productName = productName;
+        this.price = price;
+    }
+    
+
     public ProductDTO() {
     }
 

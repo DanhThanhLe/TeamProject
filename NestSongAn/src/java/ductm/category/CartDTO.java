@@ -5,13 +5,17 @@
  */
 package ductm.category;
 
+import ductm.product.ProductDTO;
+import ductm.utils.DBHelper;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.naming.NamingException;
 import javax.naming.spi.DirStateFactory;
 
 /**
@@ -70,5 +74,39 @@ public class CartDTO {
     public void empty(){
         list.clear();
     }
- 
+ public ProductDTO searchProduct(String name) 
+            throws NamingException, SQLException, ClassNotFoundException{
+        Connection conn = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        try {
+            conn=DBHelper.getConnection();
+            if (conn != null){
+                String sql = "Select Price "
+                        + "From tblProduct  "
+                        + "Where ProductName = ?";
+                stm = conn.prepareStatement(sql);
+                stm.setString(1, name);
+                rs = stm.executeQuery();
+                if(rs.next()){
+                 
+                  int Price = rs.getInt("Price");
+                  ProductDTO dto = new ProductDTO(name, Price);
+                  return dto;
+                }
+            }
+        } finally {
+            if(rs != null){
+                rs.close();
+            }
+            if(stm != null){
+                stm.close();
+            }
+            if(conn != null){
+                conn.close();
+            }
+          
+        }
+         return null;
+    }
 }

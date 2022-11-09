@@ -17,7 +17,7 @@
     </head>
     <body>
         <div id="logreg-forms">
-            <form class="form-signin" action="MainController" method="post">
+            <form class="form-signin" action="LoginController" method="post">
                 <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
                 
                 <input name="username"  type="text" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">

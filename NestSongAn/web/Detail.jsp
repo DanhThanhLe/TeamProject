@@ -73,17 +73,17 @@
 
                                         <p class="price-detail-wrap"> 
                                             <span class="price h3 text-warning"> 
-                                                <span class="num">${detail.price}</span><span class="currency">VND</span>
+                                                <span class="currency">${detail.price}</span><span class="currency">VND</span>
                                             </span> 
                                         <dl class="item-property">
 
                                             <dt>Description</dt>
                                             <dd><p>
-                                                    Weight:  ${DES.weight} gram </br> 
-                                                    Type:  ${DES.type}</br>
-                                                    Specific:  ${DES.specific}</br>
-                                                    Smell:  ${DES.smell}</br>
-                                                    Preserve:  ${DES.preserve} Thang</br> 
+                                                    Khối Lượng:  ${DES.weight} gam </br> 
+                                                    Loại:  ${DES.type}</br>
+                                                    Đặc Biệt:  ${DES.specific}</br>
+                                                    Mùi:  ${DES.smell}</br>
+                                                    Bảo Bảo:  ${DES.preserve} Tháng</br> 
 
                                                 </p></dd>
 
@@ -107,8 +107,8 @@
 
                                         </div> <!-- row.// -->
                                         <hr>
-                                        <a href="#" class="btn btn-lg btn-primary text-uppercase"> Buy now </a>
-                                        <a href="CartController?id=${detail.productID}&name=${detail.productName}&op=add_to_cart&quantity=1" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fas fa-shopping-cart"></i> Add to cart </a>
+                                        <a href="#" class="btn btn-lg btn-primary text-uppercase"> Mua Ngay </a>
+                                        <a href="CartController?id=${detail.productID}&name=${detail.productName}&op=add_to_cart&quantity=1" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fas fa-shopping-cart"></i> Thêm Vào Giỏ </a>
                                     </article> <!-- card-body.// -->
                                 </aside> <!-- col.// -->
                             </div> <!-- row.// -->
