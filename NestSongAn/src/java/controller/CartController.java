@@ -53,9 +53,9 @@ public class CartController extends HttpServlet {
             throws ServletException, IOException, SQLException, ClassNotFoundException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         int id = 100;
-        id = Integer.parseInt(request.getParameter("id")) ;
+        id = Integer.parseInt(request.getParameter("id"));
         String op = request.getParameter("op");
         switch (op) {
             case "add_to_cart":
@@ -67,22 +67,19 @@ response.setCharacterEncoding("UTF-8");
             case "Delete":
                 DeleteProduct(request, response);
                 break;
-            case "Update": 
+            case "Update":
                 UpdateProduct(request, response);
                 break;
             case "ViewCart":
                 ViewCart(request, response);
                 break;
-            
 
         }
         System.out.println(id);
     }
 
-
-
-    protected void ViewCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, ClassNotFoundException{
-         response.setContentType("text/html;charset=UTF-8");
+    protected void ViewCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, ClassNotFoundException {
+        response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         ProductDAO dao = new ProductDAO();
 
@@ -92,21 +89,19 @@ response.setCharacterEncoding("UTF-8");
         request.setAttribute("listC", listC);
         request.setAttribute("n", last);
         request.getRequestDispatcher("ViewCart.jsp").forward(request, response);
- 
-   }
 
-    
+    }
 
     protected void UpdateProduct(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException, SQLException, ClassNotFoundException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         int id = Integer.parseInt(request.getParameter("id"));
         int quantity = Integer.parseInt(request.getParameter("quantity"));
         CartDTO cart = new CartDTO();
-        HttpSession session = request.getSession(); 
+        HttpSession session = request.getSession();
         HashMap<Integer, Item> lst = (HashMap<Integer, Item>) session.getAttribute("cart");
-        if(lst != null){
+        if (lst != null) {
             cart.setCart(lst);
             cart.Update(id, quantity);
             lst = cart.getList();
@@ -119,21 +114,22 @@ response.setCharacterEncoding("UTF-8");
         request.setAttribute("listC", listC);
         request.setAttribute("n", last);
 
-session.setAttribute("cartsize", cartSize(lst));
+        session.setAttribute("cartsize", cartSize(lst));
         session.setAttribute("cart", lst);
         session.setAttribute("total", totalPrice(lst));
         request.getRequestDispatcher("ViewCart.jsp").forward(request, response);
-        
+
     }
+
     protected void DeleteProduct(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException, SQLException, ClassNotFoundException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         int id = Integer.parseInt(request.getParameter("id"));
         CartDTO cart = new CartDTO();
-        HttpSession session = request.getSession(); 
+        HttpSession session = request.getSession();
         HashMap<Integer, Item> lst = (HashMap<Integer, Item>) session.getAttribute("cart");
-        if(lst != null){
+        if (lst != null) {
             cart.setCart(lst);
             cart.deleteProduct(id);
             lst = cart.getList();
@@ -149,11 +145,12 @@ session.setAttribute("cartsize", cartSize(lst));
         session.setAttribute("cartsize", cartSize(lst));
         session.setAttribute("total", totalPrice(lst));
         request.getRequestDispatcher("ViewCart.jsp").forward(request, response);
-        
+
     }
-        protected void addToCart(HttpServletRequest request, HttpServletResponse response)
+
+    protected void addToCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, ClassNotFoundException {
-            response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         String ID = request.getParameter("id");
         ProductDTO Product = ProductDAO.getProductByID(ID);
@@ -172,9 +169,9 @@ session.setAttribute("cartsize", cartSize(lst));
         //Thêm item vào cart
         getCart.add(item);
         //Để cart vào session
-         cart = getCart.getList();
-         ProductDAO dao = new ProductDAO();
-         CategoryDAO daoC = new CategoryDAO();
+        cart = getCart.getList();
+        ProductDAO dao = new ProductDAO();
+        CategoryDAO daoC = new CategoryDAO();
         ProductDTO last = dao.newProduct();
         List<CategoryDTO> listC = daoC.getAllCategory();
         request.setAttribute("listC", listC);
@@ -184,66 +181,68 @@ session.setAttribute("cartsize", cartSize(lst));
         session.setAttribute("total", totalPrice(cart));
         request.getRequestDispatcher("HomeController").forward(request, response);
     }
-    
-   protected void checkout(HttpServletRequest request, HttpServletResponse response)
-       throws ServletException, IOException, SQLException, NamingException, ClassNotFoundException {
-       response.setContentType("text/html;charset=UTF-8");
+
+    protected void checkout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException, NamingException, ClassNotFoundException {
+        response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-       String name = request.getParameter("name");
-       String email = request.getParameter("email");
-       String phone = request.getParameter("phone");
-       String address = request.getParameter("address");
-       String total = request.getParameter("total");
-         //1. Cust goes to cart place
-            HttpSession session = request.getSession();
-            //2. cust take cart
-            CartDTO getCart = new CartDTO();
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        String total = request.getParameter("total");
+        //1. Cust goes to cart place
+        HttpSession session = request.getSession();
+        //2. cust take cart
+        CartDTO getCart = new CartDTO();
         HashMap<Integer, Item> cart = (HashMap<Integer, Item>) session.getAttribute("cart");
-            if(cart != null){
-                getCart.setCart(cart);
-                if(getCart.getList()!= null){
-                    Calendar c = Calendar.getInstance();
-                    java.util.Date day = c.getTime();
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    String s = df.format(day);
-                    java.sql.Date day2 = java.sql.Date.valueOf(s);
-                    OrderDAO o = new OrderDAO();
-                    OrderDetailDAO o2 = new OrderDetailDAO();
-                    o.addOrder(name, email, phone, day2, address, total);
-                    int ID = o.getLastOrderID();
-                   
-                    for (Item item : getCart.getList().values()){
-                        ProductDTO prod = getCart.searchProduct(item.getName());
-                        o2.addOrderDetail(ID,item.getProduct().getProductID(),item.getQuantity(),prod.getPrice() ); 
-                    }
-                    session.removeAttribute("cart");
-                } 
-            }try {
-           
-       } catch (Exception e) {
-           System.out.println(e.toString());
-       }
-            finally{
-             response.sendRedirect("checkout.jsp");
+        if (cart != null) {
+            getCart.setCart(cart);
+            if (getCart.getList() != null) {
+                Calendar c = Calendar.getInstance();
+                java.util.Date day = c.getTime();
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                String s = df.format(day);
+                java.sql.Date day2 = java.sql.Date.valueOf(s);
+                OrderDAO o = new OrderDAO();
+                OrderDetailDAO o2 = new OrderDetailDAO();
+                o.addOrder(name, email, phone, day2, address, total);
+                int ID = o.getLastOrderID();
+
+                for (Item item : getCart.getList().values()) {
+                    ProductDTO prod = getCart.searchProduct(item.getName());
+                    o2.addOrderDetail(ID, item.getProduct().getProductID(), item.getQuantity(), prod.getPrice());
+                }
+                session.removeAttribute("cart");
+            }
         }
-   }
-    
-  
-  public double totalPrice(HashMap<Integer, Item> cart){
-        int count = 0;
-        
-        for(Map.Entry<Integer, Item> list : cart.entrySet()){
-            count += list.getValue().getProduct().getPrice() * list.getValue().getQuantity();
-        }        return count;
-        
+        try {
+
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        } finally {
+            response.sendRedirect("checkout.jsp");
+        }
     }
-  public int cartSize (HashMap<Integer, Item> cart){
-        int d=0;
-      for(Item i : cart.values()){
-          d+=i.getQuantity();
-      }
-      return d;
-  }
+
+    public double totalPrice(HashMap<Integer, Item> cart) {
+        int count = 0;
+
+        for (Map.Entry<Integer, Item> list : cart.entrySet()) {
+            count += list.getValue().getProduct().getPrice() * list.getValue().getQuantity();
+        }
+        return count;
+
+    }
+
+    public int cartSize(HashMap<Integer, Item> cart) {
+        int d = 0;
+        for (Item i : cart.values()) {
+            d += i.getQuantity();
+        }
+        return d;
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
