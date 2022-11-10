@@ -73,7 +73,8 @@ response.setCharacterEncoding("UTF-8");
             case "ViewCart":
                 ViewCart(request, response);
                 break;
-            
+            case "buynow":
+                buyNow(request, response);
 
         }
         System.out.println(id);
@@ -185,6 +186,40 @@ session.setAttribute("cartsize", cartSize(lst));
         request.getRequestDispatcher("HomeController").forward(request, response);
     }
     
+         protected void buyNow(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
+            response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        String ID = request.getParameter("id");
+        ProductDTO Product = ProductDAO.getProductByID(ID);
+        String name = request.getParameter("name");
+        int quantity = Integer.parseInt(request.getParameter("quantity"));
+        Item item = new Item(ID, Product, quantity, name);
+        //Tạo đối tượng session
+        HttpSession session = request.getSession();
+        //Lấy cart từ session
+        CartDTO getCart = new CartDTO();
+        HashMap<Integer, Item> cart = (HashMap<Integer, Item>) session.getAttribute("cart");
+        //Nếu trong session chưa có cart thì sẽ tạo cart mới
+        if (cart != null) {
+            getCart.setCart(cart);
+        }
+        //Thêm item vào cart
+        getCart.add(item);
+        //Để cart vào session
+         cart = getCart.getList();
+         ProductDAO dao = new ProductDAO();
+         CategoryDAO daoC = new CategoryDAO();
+        ProductDTO last = dao.newProduct();
+        List<CategoryDTO> listC = daoC.getAllCategory();
+        request.setAttribute("listC", listC);
+        request.setAttribute("n", last);
+        session.setAttribute("cart", cart);
+        session.setAttribute("cartsize", cartSize(cart));
+        session.setAttribute("total", totalPrice(cart));
+        request.getRequestDispatcher("ViewCart.jsp").forward(request, response);
+    }
+        
    protected void checkout(HttpServletRequest request, HttpServletResponse response)
        throws ServletException, IOException, SQLException, NamingException, ClassNotFoundException {
        response.setContentType("text/html;charset=UTF-8");

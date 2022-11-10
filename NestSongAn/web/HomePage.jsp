@@ -41,7 +41,7 @@
                                         <h4 class="card-title show_txt"><a href="detail?pid=${o.productID}&a=${o.productID}" title="View Product">${o.productName}</a></h4>
                                         <div class="row">
                                             <div class="col">
-                                                <p class="btn btn-danger btn-block">${o.price} VND</p>
+                                                <a href="CartController?id=${o.productID}&name=${o.productName}&op=buynow&quantity=1" class="btn btn-danger btn-block">${o.price} VND</a>
                                             </div>
                                             <div class="col">
                                                 <a href="CartController?id=${o.productID}&name=${o.productName}&op=add_to_cart&quantity=1" class="btn btn-success btn-block">Thêm Vào Giỏ</a>
