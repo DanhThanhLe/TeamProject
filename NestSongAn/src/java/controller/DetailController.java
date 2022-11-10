@@ -41,6 +41,8 @@ public class DetailController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+response.setCharacterEncoding("UTF-8");
        String id = request.getParameter("pid");
 
         ProductDAO dao = new ProductDAO();

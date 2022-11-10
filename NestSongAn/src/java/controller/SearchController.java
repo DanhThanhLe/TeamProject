@@ -40,6 +40,7 @@ public class SearchController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String searchValue = request.getParameter("txtSearch");
         try {
             if (!searchValue.trim().isEmpty()) {

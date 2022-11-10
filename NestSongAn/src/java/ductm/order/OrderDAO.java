@@ -26,7 +26,7 @@ public class OrderDAO implements Serializable{
         try {
             conn = DBHelper.getConnection();
             String sql ="INSERT tblOrders(CustomerName, CustomerEmail, CustomerPhoneNumber, CustomerAddress, OrderDate, Total) "
-                    + "VALUES(?, ?, ?, ?, ?, ?)";
+                    + "VALUES(?, ?, ?, ?, ?, ? COLLATE Latin1_General_CS_AS )";
                     stm = conn.prepareStatement(sql);
                 stm.setString(1, name);
                 stm.setString(2, mail);

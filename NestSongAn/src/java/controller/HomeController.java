@@ -40,6 +40,8 @@ public class HomeController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+response.setCharacterEncoding("UTF-8");
         ProductDAO dao = new ProductDAO();
         CategoryDAO daoC = new CategoryDAO();
         List<ProductDTO> list = dao.getAllProduct();

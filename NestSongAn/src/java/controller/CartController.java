@@ -52,6 +52,8 @@ public class CartController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, ClassNotFoundException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+response.setCharacterEncoding("UTF-8");
         int id = 100;
         id = Integer.parseInt(request.getParameter("id")) ;
         String op = request.getParameter("op");
@@ -80,7 +82,9 @@ public class CartController extends HttpServlet {
 
 
     protected void ViewCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, ClassNotFoundException{
-         ProductDAO dao = new ProductDAO();
+         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        ProductDAO dao = new ProductDAO();
 
         CategoryDAO daoC = new CategoryDAO();
         ProductDTO last = dao.newProduct();
@@ -95,6 +99,8 @@ public class CartController extends HttpServlet {
 
     protected void UpdateProduct(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException, SQLException, ClassNotFoundException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         int id = Integer.parseInt(request.getParameter("id"));
         int quantity = Integer.parseInt(request.getParameter("quantity"));
         CartDTO cart = new CartDTO();
@@ -121,6 +127,8 @@ session.setAttribute("cartsize", cartSize(lst));
     }
     protected void DeleteProduct(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException, SQLException, ClassNotFoundException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         int id = Integer.parseInt(request.getParameter("id"));
         CartDTO cart = new CartDTO();
         HttpSession session = request.getSession(); 
@@ -145,6 +153,8 @@ session.setAttribute("cartsize", cartSize(lst));
     }
         protected void addToCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, ClassNotFoundException {
+            response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         String ID = request.getParameter("id");
         ProductDTO Product = ProductDAO.getProductByID(ID);
         String name = request.getParameter("name");
@@ -177,13 +187,13 @@ session.setAttribute("cartsize", cartSize(lst));
     
    protected void checkout(HttpServletRequest request, HttpServletResponse response)
        throws ServletException, IOException, SQLException, NamingException, ClassNotFoundException {
+       response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
        String name = request.getParameter("name");
        String email = request.getParameter("email");
        String phone = request.getParameter("phone");
        String address = request.getParameter("address");
        String total = request.getParameter("total");
-        OrderDAO dao = new OrderDAO();
-        OrderDetailDAO ddao = new OrderDetailDAO();
          //1. Cust goes to cart place
             HttpSession session = request.getSession();
             //2. cust take cart
@@ -201,19 +211,17 @@ session.setAttribute("cartsize", cartSize(lst));
                     OrderDetailDAO o2 = new OrderDetailDAO();
                     o.addOrder(name, email, phone, day2, address, total);
                     int ID = o.getLastOrderID();
-                    int total2 = 0;
+                   
                     for (Item item : getCart.getList().values()){
                         ProductDTO prod = getCart.searchProduct(item.getName());
                         o2.addOrderDetail(ID,item.getProduct().getProductID(),item.getQuantity(),prod.getPrice() ); 
-                        
-                       
                     }
-
                     session.removeAttribute("cart");
                 } 
             }try {
            
        } catch (Exception e) {
+           System.out.println(e.toString());
        }
             finally{
              response.sendRedirect("checkout.jsp");
